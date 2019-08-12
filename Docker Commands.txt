@@ -1,0 +1,105 @@
+$ docker pull mysql  ----> download new image or services
+$ docker image inspect <image-id> ----> get the details of the image
+$ docker image ls   ----> list all the images
+$ docker container ls -a    --->   list all the container (-a will show inactive container)
+$ docker container logs <container-ID>   ---> fetch logs from specific container
+$ docker container run -p 3306:3306 -d --name aug_mysql -e MYSQL_ROOT_PASSWORD=admin mysql   ---> run a new container with specifying port (-p) and dettached (-d) and with name (--name) and setting env (-e) with password (MYSQL_ROOT_PASSWORD=admin)
+$ docker container run -p 3306:3306 -d --name aug_mysql -e MYSQL_RANDOM_ROOT_PASSWORD=yes mysql  ---> start and run a new container (setting environment varaiable using -e and random password(MYSQL_RANDOM_ROOT_PASSWORD=yes) for mysql)
+$ docker container stop <cont-id/name>  ---> stop a container
+$ docker container start <cont-id/name>  ---> start a stop container
+$ docker container rm <cont-id/name>  ----> remove container
+
+$ docker login  -----> to login to docker hub
+
+$ docker tag nginx vibzdocker/mynginx  ---> to tag to our dockerhub <dockerid/contyainername>
+$ docker tag nginx vibzdocker/mynginx:1.1  ---> tagging the version. will add with new tag in same repository
+$ docker push vibzdocker/mynginx  ----> to push the container to our docker hub <dockerid/contyainername>
+
+$ docker network ls ----> list all networks
+$ docker network create <networkname>   ----> create custom network
+$ docker container run -p 3000:80 --name nginx1 -d --network myapp nginx  ---->  creating a new service with assigning custom network
+
+
+$ docker container exec -it 6a42f9e11ce3 bash  ----> to get into container <container name/id> <command(bash command)>
+	apt-get update
+	apt-get install htop
+	htop   ----> display process
+	apt-get install iputils-ping
+
+$ docker container run -p 3001:80 nginx1 -d --network myapp nginx  ---> created a nginx server to test ping with same network myapp
+$ docker container run -p 3001:80 nginx2 -d --network myapp nginx  ---> created a nginx server to test ping with same network myapp
+
+ping nginx1.myapp / ping nginx2.myapp  ---> willl work without knowing ipaddress
+
+$ docker inspect 675d4faa5189  ---> inspect the image id and display an html with details
+
+$ docker network connect <myapp2> <nginx1>   ----> connect one container with different network
+$ docker container exec -it nginx1 bash
+	ping nginx3.myapp2  ---> will work in nginx1 as we have attached myapp2 to nginx1 container
+
+$ docker network disconnect myapp2 nginx1  -----> disconnect network from container
+
+#####to test load balancing####
+
+$ docker pull elasticsearch:2   -----> download elastic search
+
+$ docker network create socgen   -----> create new network name socgen
+
+$ docker container run --net socgen --name es1 --network-alias search -d elasticsearch:2  ---> create a container of elasticsearch:2 with netwrk alias name search
+$ docker container run --net socgen --name es2 --network-alias search -d elasticsearch:2 
+
+$ docker pull alpine  -- --> download alpine to execute nslookup
+$ docker container run --net socgen alpine nslookup search  ---> to see the ipaddress linked with alias 'search' with command nslookup
+
+OUTPUT
+nslookup: can't resolve '(null)': Name does not resolve
+
+Name:      search
+Address 1: 172.20.0.2 es1.socgen
+Address 2: 172.20.0.3 es2.socgen
+
+$ docker pull centos  -----> download centos to execute curl
+$ docker container run --net socgen centos curl -s search:9200   -----> create a container with network socgen with centos to execute curl and search for elastic search (port:9200) to get the details where 'search' is the alias name
+
+OUTPUT
+es1
+{
+  "name" : "Iridia",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "KJJ21ADCTeGsjEPiPGa_9w",
+  "version" : {
+    "number" : "2.4.6",
+    "build_hash" : "5376dca9f70f3abef96a77f4bb22720ace8240fd",
+    "build_timestamp" : "2017-07-18T12:17:44Z",
+    "build_snapshot" : false,
+    "lucene_version" : "5.5.4"
+  },
+  "tagline" : "You Know, for Search"
+}
+es2
+{
+  "name" : "Martinex",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "rK91vN7vTNqXlZU5ovBN0A",
+  "version" : {
+    "number" : "2.4.6",
+    "build_hash" : "5376dca9f70f3abef96a77f4bb22720ace8240fd",
+    "build_timestamp" : "2017-07-18T12:17:44Z",
+    "build_snapshot" : false,
+    "lucene_version" : "5.5.4"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+
+
+$ docker container prune -----> to remove  all stopped containers
+
+##########Creating Volume#####
+
+$ docker container run --name nginxtest -p 5000:80 -d -v /c/dock:/usr/share/nginx/html nginx  -----> -v will help to create volume, then specfy the local path and the app path. If index.html is placed in local then it will be opened when it is loaded
+
+
+
+
+
