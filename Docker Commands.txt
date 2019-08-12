@@ -99,7 +99,46 @@ $ docker container prune -----> to remove  all stopped containers
 
 $ docker container run --name nginxtest -p 5000:80 -d -v /c/dock:/usr/share/nginx/html nginx  -----> -v will help to create volume, then specfy the local path and the app path. If index.html is placed in local then it will be opened when it is loaded
 
+$ docker volume ls   -----> list all volume
 
+$ docker volume create <database>  ----> create new volume named database
 
+OUTPUT
+DRIVER              VOLUME NAME
+local               632a5132cc300f1f811f4b13966e10797ef086b4c909e6d46e8f96e3456b1724
+local               8cadb4777d943142aabcd5b70bcb6a5a78e36102d10d4f600bb1ec0745b343e9
+local               8e9627af5aeec7512fb844dc7f91c3d4400f572f52a64262ad0785c3e2e08df3
+local               a61d4ffa0f101ecb2a08c1fda3b384e6db01c41290c718168177c8028ce56c4d
+local               b6a7a41b1c7e45046bfeabfc7d6b3adf8059b301ad12100898da4a8a0f153e85
+local               database
 
+$ docker container run -d -p 5001:80 -v nginxvol:/usr/share/nginx/html --name ngtvol nginx  ----> create a container with specified volume
+
+$ docker container exec -it ngtvol bash  ---> getting inside nginx container
+
+	cd usr/share/nginx/html/
+	ls
+	apt-get update
+	apt-get install nano
+	nano index.html  ---> change the file to see the update in screen.
+
+once done remove the container and add new container with same volume
+$ docker container run -d -p 5000:80 -v nginxvol:/usr/share/nginx/html --name ngtvol nginx ----> execute the same modified file
+
+#######POSTGRES TASK########
+
+$ docker pull postgres:9.6.1   -----> base 
+$ docker pull postgres:9.6.2   -----> to update
+$ docker volume create psql-data  -----> create volume
+$ docker container run --name pstgres -e POSTGRES_PASSWORD=mysecretpassword -d -v psql-data:/var/lib/postgresql/data postgres:9.6.1  ------> we need to set env -e variable to access postgres
+
+$ docker container exec -it pstgres bash
+
+To run postgres plsql -----> /usr/lib/postgresql/9.6/bin
+
+$ docker container stop aa14b2c4f200
+$ docker container rm aa14b2c4f200
+--updated
+$ docker container run --name pstgres -e POSTGRES_PASSWORD=mysecretpassword -d -v psql-data:/var/lib/postgresql/data postgres:9.6.2
+$ docker container logs aa14b2c4f200 ---> check if work
 
