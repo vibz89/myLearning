@@ -142,3 +142,144 @@ $ docker container rm aa14b2c4f200
 $ docker container run --name pstgres -e POSTGRES_PASSWORD=mysecretpassword -d -v psql-data:/var/lib/postgresql/data postgres:9.6.2
 $ docker container logs aa14b2c4f200 ---> check if work
 
+
+
+########Creating Docker Image##########
+
+create 'Dockerfile' and add details to execute. Sample dockerfile to run in ubuntu with nginx is shown below. Each line is each layer of docker image.
+For eg:-
+	FROM ubuntu
+
+	RUN apt-get update	------> to fetch the cached data
+	RUN apt-get install nginx -y	------> to install nginx to execut silently (-y)
+	RUN apt-get install htop	------> to install htop
+
+
+	VOLUME ["/usr/share/nginx/html"]	-----> mention the volume
+
+	EXPOSE 80			------> expose the port
+
+	CMD ["nginx","-g","daemon off;"]   ----> to keep the container alive
+
+
+after creating the Dockerfile then build the image using this
+$ docker build -t="vibzdocker/nginxalpha" .
+$ docker build -t vibzdocker/nginxalpha .	------> to create image using the Dockerfile existing within the cmd location
+
+$ docker container run -d --name nginxubuntu -p 5001:80 vibzdocker/nginxalpha
+
+$ docker image history vibzdocker/nginxalpha  ----> show all the history of the image. it will show layered wise history of image generation.
+
+OUTPUT
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+25f5b58ce456        6 minutes ago       /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
+c8ba9ae0b253        6 minutes ago       /bin/sh -c #(nop)  EXPOSE 80                    0B
+ad7aa3ffb5da        6 minutes ago       /bin/sh -c #(nop)  VOLUME [/usr/share/nginx/…   0B
+4398c0aeeffe        6 minutes ago       /bin/sh -c apt-get install htop                 1.22MB
+305b4bc4024c        6 minutes ago       /bin/sh -c apt-get install nginx -y             60.2MB
+495d51dd3551        7 minutes ago       /bin/sh -c apt-get update                       26.9MB
+3556258649b2        2 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+<missing>           2 weeks ago         /bin/sh -c mkdir -p /run/systemd && echo 'do…   7B
+<missing>           2 weeks ago         /bin/sh -c set -xe   && echo '#!/bin/sh' > /…   745B
+<missing>           2 weeks ago         /bin/sh -c [ -z "$(apt-get indextargets)" ]     987kB
+<missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:3ddd02d976792b6c6…   63.2MB
+
+As we have different layer of installation in the Dockerfile, we can make it as a single layer instead of executing/creating seperate layer
+Eg:-
+
+	RUN apt-get update && \
+		apt-get install nginx -y && \
+		apt-get install htop
+
+optimised Dockerfile
+	
+	FROM ubuntu
+
+	RUN apt-get update && \
+	 	apt-get install nginx -y && \
+	 	apt-get install htop
+
+
+	VOLUME ["/usr/share/nginx/html"]
+
+	EXPOSE 80
+
+	CMD ["nginx","-g","daemon off;"]
+
+Then when you get the history it would have optimised the layer as shown below
+
+$ docker image history vibzdocker/nginxminalpha
+
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+9e94afaf8bc7        3 minutes ago       /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
+3727d75bdef4        3 minutes ago       /bin/sh -c #(nop)  EXPOSE 80                    0B
+ade78f4413fc        3 minutes ago       /bin/sh -c #(nop)  VOLUME [/usr/share/nginx/…   0B
+69e532252860        3 minutes ago       /bin/sh -c apt-get update &&   apt-get insta…   87.3MB
+3556258649b2        2 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+<missing>           2 weeks ago         /bin/sh -c mkdir -p /run/systemd && echo 'do…   7B
+<missing>           2 weeks ago         /bin/sh -c set -xe   && echo '#!/bin/sh' > /…   745B
+<missing>           2 weeks ago         /bin/sh -c [ -z "$(apt-get indextargets)" ]     987kB
+<missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:3ddd02d976792b6c6…   63.2MB
+
+
+$ docker build -t vibzdocker/nginxbeta1 .
+$ docker container run -d --name nginxubuntu -p 5000:80 vibzdocker/nginxbeta1
+
+
+#######################Creating Doc file with php and nginx ################
+
+FROM ubuntu
+
+RUN apt-get update \
+	&& apt-get install nginx -y \
+	&& apt-get install htop \
+	&& apt-get install wget -y \
+	&& apt-get install -y php7.0
+	
+	
+
+# creating a folder 
+RUN	mkdir /var/downloads && \
+    wget -O /var/downloads/ https://github.com/dockerfile/nginx/archive/master.zip
+
+
+#Copying customised default to update port for nginx
+COPY default /etc/nginx/sites-enabled/default
+
+#specify the working directory 
+WORKDIR /var/www/html
+
+#copy the file
+COPY src /var/www/html/
+
+#create the volume
+VOLUME ["/var/www/html"]
+
+#expose the port
+EXPOSE 81
+
+#specify the command which will keep it alive
+CMD ["nginx","-g","daemon off;"]
+
+
+******
+
+$ docker build -t vibzdocker/nginxphpalpha .
+$ docker container run --name ngphub -d -p 81:81 vibzdocker/nginxphpalpha
+$ docker container exec -it 246f3bb014e0 bash
+
+
+
+##########################DOCKER COMPOSE##############################
+
+
+$ docker-compose --version    ------> provide version of docker-compose
+
+OUTPUT
+docker-compose version 1.20.1, build 5d8c71b2
+
+
+
+
+
+
