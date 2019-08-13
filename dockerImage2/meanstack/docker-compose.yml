@@ -1,0 +1,30 @@
+#MEAN Stack
+version : "3"
+services:
+    frontend:
+        image: nginx
+        ports:
+           - "8080:80"
+        networks:
+           - mynet
+        volumes:        
+           - nginxvol1:/usr/share/nginx/html
+        depends_on:
+           - database
+    database:
+        image: mongo
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+        ports:
+           - "27017:27017"
+    backend:
+        image: node
+        ports:
+           - "5000:8080"
+       
+networks:
+    mynet:
+
+volumes:
+    nginxvol1:
