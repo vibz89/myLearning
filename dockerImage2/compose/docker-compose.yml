@@ -8,8 +8,16 @@ services:
         networks:
            - mynet
         volumes:
-        #  -- :ro will make the volume read only
+        # :ro will make the volume read only
            - nginxvol1:/usr/share/nginx/html:ro
+           
+        # specify the depended services
+        depends_on:
+           - database
+        # deploy will work as swarm so it will be depricated here
+        deploy:
+            mode: replicated
+            replicas: 6
     database:
         image: postgres
         environment:
@@ -23,7 +31,7 @@ services:
         networks:
            - yournet
         volumes:
-           - nginxvol1:/usr/share/nginx/html
+           - nginxvol2:/usr/share/nginx/html
 
 #creating customised networks we neeed to specify seperately
 networks:

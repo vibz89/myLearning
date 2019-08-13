@@ -300,8 +300,12 @@ $ docker-compose down   ------> will shut down the container and remove
 
 it will create network, container, volume and will remove these when stopped automatically
 
+yml definition --
+
 - nginxvol1:/usr/share/nginx/html:ro  -----> :ro -- readonly mode for volume creation
 
+depends_on:
+           - database   ----> when added 'depends on' it will wait till the depended services are up. here 'database' service have to start.
 
 
 
