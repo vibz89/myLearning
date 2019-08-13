@@ -278,6 +278,30 @@ $ docker-compose --version    ------> provide version of docker-compose
 OUTPUT
 docker-compose version 1.20.1, build 5d8c71b2
 
+Create docker-compose.yml file which defines the image files and used for starting a container
+
+SAMPLE 
+
+version : "3"
+services:
+    frontend:
+        image: nginx
+        ports:
+           - "8080:80"
+    database:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: example
+
+
+
+$ docker-compose up -d   -----> will execute the docker-compose.yml . it will start the container
+$ docker-compose down   ------> will shut down the container and remove
+
+it will create network, container, volume and will remove these when stopped automatically
+
+- nginxvol1:/usr/share/nginx/html:ro  -----> :ro -- readonly mode for volume creation
+
 
 
 

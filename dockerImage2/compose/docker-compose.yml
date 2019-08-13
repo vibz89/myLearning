@@ -1,8 +1,36 @@
+#Help to start multiple container using a single file. Here nginx and postgres image will be containerized once executed
 version : "3"
 services:
     frontend:
         image: nginx
         ports:
            - "8080:80"
+        networks:
+           - mynet
+        volumes:
+        #  -- :ro will make the volume read only
+           - nginxvol1:/usr/share/nginx/html:ro
     database:
         image: postgres
+        environment:
+            POSTGRES_PASSWORD: example
+        networks:
+           - mynet
+    otherservice:
+        image: nginx
+        ports:
+           - "5000:80"
+        networks:
+           - yournet
+        volumes:
+           - nginxvol1:/usr/share/nginx/html
+
+#creating customised networks we neeed to specify seperately
+networks:
+    mynet:
+    yournet:
+
+#creating customised volume which we neeed to specify seperately
+volumes:
+    nginxvol1:
+    nginxvol2:
