@@ -73,7 +73,7 @@ es1
     "build_timestamp" : "2017-07-18T12:17:44Z",
     "build_snapshot" : false,
     "lucene_version" : "5.5.4"
-  },
+  },swarm 
   "tagline" : "You Know, for Search"
 }
 es2
@@ -89,7 +89,7 @@ es2
     "lucene_version" : "5.5.4"
   },
   "tagline" : "You Know, for Search"
-}
+}swarm 
 
 
 
@@ -172,17 +172,17 @@ $ docker image history vibzdocker/nginxalpha  ----> show all the history of the 
 
 OUTPUT
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
-25f5b58ce456        6 minutes ago       /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
+25f5b58ce456        6 minutes ago       /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemonâ€¦   0B
 c8ba9ae0b253        6 minutes ago       /bin/sh -c #(nop)  EXPOSE 80                    0B
-ad7aa3ffb5da        6 minutes ago       /bin/sh -c #(nop)  VOLUME [/usr/share/nginx/…   0B
+ad7aa3ffb5da        6 minutes ago       /bin/sh -c #(nop)  VOLUME [/usr/share/nginx/â€¦   0B
 4398c0aeeffe        6 minutes ago       /bin/sh -c apt-get install htop                 1.22MB
 305b4bc4024c        6 minutes ago       /bin/sh -c apt-get install nginx -y             60.2MB
 495d51dd3551        7 minutes ago       /bin/sh -c apt-get update                       26.9MB
 3556258649b2        2 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
-<missing>           2 weeks ago         /bin/sh -c mkdir -p /run/systemd && echo 'do…   7B
-<missing>           2 weeks ago         /bin/sh -c set -xe   && echo '#!/bin/sh' > /…   745B
+<missing>           2 weeks ago         /bin/sh -c mkdir -p /run/systemd && echo 'doâ€¦   7B
+<missing>           2 weeks ago         /bin/sh -c set -xe   && echo '#!/bin/sh' > /â€¦   745B
 <missing>           2 weeks ago         /bin/sh -c [ -z "$(apt-get indextargets)" ]     987kB
-<missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:3ddd02d976792b6c6…   63.2MB
+<missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:3ddd02d976792b6c6â€¦   63.2MB
 
 As we have different layer of installation in the Dockerfile, we can make it as a single layer instead of executing/creating seperate layer
 Eg:-
@@ -211,15 +211,15 @@ Then when you get the history it would have optimised the layer as shown below
 $ docker image history vibzdocker/nginxminalpha
 
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
-9e94afaf8bc7        3 minutes ago       /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
+9e94afaf8bc7        3 minutes ago       /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemonâ€¦   0B
 3727d75bdef4        3 minutes ago       /bin/sh -c #(nop)  EXPOSE 80                    0B
-ade78f4413fc        3 minutes ago       /bin/sh -c #(nop)  VOLUME [/usr/share/nginx/…   0B
-69e532252860        3 minutes ago       /bin/sh -c apt-get update &&   apt-get insta…   87.3MB
+ade78f4413fc        3 minutes ago       /bin/sh -c #(nop)  VOLUME [/usr/share/nginx/â€¦   0B
+69e532252860        3 minutes ago       /bin/sh -c apt-get update &&   apt-get instaâ€¦   87.3MB
 3556258649b2        2 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
-<missing>           2 weeks ago         /bin/sh -c mkdir -p /run/systemd && echo 'do…   7B
-<missing>           2 weeks ago         /bin/sh -c set -xe   && echo '#!/bin/sh' > /…   745B
+<missing>           2 weeks ago         /bin/sh -c mkdir -p /run/systemd && echo 'doâ€¦   7B
+<missing>           2 weeks ago         /bin/sh -c set -xe   && echo '#!/bin/sh' > /â€¦   745B
 <missing>           2 weeks ago         /bin/sh -c [ -z "$(apt-get indextargets)" ]     987kB
-<missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:3ddd02d976792b6c6…   63.2MB
+<missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:3ddd02d976792b6c6â€¦   63.2MB
 
 
 $ docker build -t vibzdocker/nginxbeta1 .
@@ -323,5 +323,17 @@ $ docker swarm join --token SWMTKN-1-3jig90kzbkxfhdxs14nw9g7dv1e9bvdc2m7dwvtsngz
 
 $ docker swarm join-token manager   -------> will allow to add a new manager into manager group
 $ docker swarm leave --force ------> to exit from swarm
+
+Manager Only
+$ docker service create -p 5000:80 nginx ------> create a service which can be access by workers
+$ docker service ls   -------> list out all services (similar to container)
+$ docker service ps <service_id>   -------> display the service and get the node and container details
+$ docker service rm <service_id>   -------> remove the service
+
+Creating replica by manager
+$ docker service create --replicas 3 -p 5000:80 nginx    ------> to create 3 replica of nginx
+
+$ docker node ls     -------> display who all connected to the service
+
 
 
