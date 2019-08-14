@@ -310,4 +310,9 @@ depends_on:
 
 
 
+**************************************************************
+
+
+$ docker search tomcat  -----> to search for image
+
 
