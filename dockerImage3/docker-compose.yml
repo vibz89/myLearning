@@ -41,3 +41,7 @@ volumes:
     drupal-profiles:
     drupal-sites:
     drupal-themes:
+    
+    
+    
+#docker swarm join --token SWMTKN-1-521xfqmujyinz6ida87ffofafzmypuvjtt6bhddhyxpz2kaqz8-2snwb15nts8057t91do9jsfdr 192.168.0.60:2377
