@@ -315,4 +315,11 @@ depends_on:
 
 $ docker search tomcat  -----> to search for image
 
+###########################DOCKER SWARM################################
 
+$ docker swarm init    ------> will creat a manager with details for joining for workers
+$ docker swarm init --advertise-addr ip_address_of_my_system    -----> to swarn with ip address
+$ docker swarm join --token SWMTKN-1-3jig90kzbkxfhdxs14nw9g7dv1e9bvdc2m7dwvtsngzsol41b2-b7mmtgnn1lwfk1gvh6kuqjncf 10.0.2.15:2377   ------>  to add worker to the manager
+
+$ docker swarm join-token manager   -------> will allow to add a new manager into manager group
+$ docker swarm leave --force ------> to exit from swarm
