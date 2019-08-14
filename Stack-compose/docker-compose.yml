@@ -1,0 +1,46 @@
+version: '3.1'
+
+services:
+  vote:
+    image: dockersamples/examplevotingapp_vote:before
+    ports:
+     - "80:80"
+    networks:
+      - frontend
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+  redis:
+    image: redis:3.2
+    volumes:
+      - redis-data:/data
+    networks:
+      - frontend
+  worker:
+    image: dockersamples/examplevotingapp_worker
+    networks:
+      - frontend
+      - backend
+  db:
+    image: postgres:9.4
+    environment:
+     - POSTGRES_PASSWORD=example    
+    volumes:
+     - postgres-data:/var/lib/postgressql/data
+    networks:
+     - backend
+  result:
+    image: dockersamples/examplevotingapp_result:before
+    ports:
+     - "5002:80"
+    networks:
+      - backend
+volumes:
+  postgres-data:
+  redis-data:
+networks:
+  frontend:
+    driver: overlay
+  backend:
+    driver: overlay
